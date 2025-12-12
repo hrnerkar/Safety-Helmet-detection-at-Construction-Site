@@ -1,0 +1,13 @@
+opencv-python
+numpy
+matplotlib
+imutils
+pillow
+torch
+torchvision
+tqdm
+pyyaml
+requests
+smtplib  # Used by Python internally, not installable via pip
+email-validator
+flask

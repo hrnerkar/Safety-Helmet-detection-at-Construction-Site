@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Helmet Detection Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+    }
+
+    .container {
+      margin-top: 40px;
+      display: flex;
+      gap: 30px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .video-feed {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      border: 6px solid #007BFF;
+    }
+
+    .logs {
+      width: 400px;
+      height: 480px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      overflow-y: auto;
+      backdrop-filter: blur(20px);
+    }
+
+    .logs h2 {
+      margin-top: 0;
+      color: #333;
+      font-size: 22px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+
+    .log-entry {
+      font-size: 15px;
+      margin-bottom: 12px;
+      border-left: 4px solid #007BFF;
+      padding-left: 10px;
+      color: #222;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .log-entry.alert {
+      border-left-color: #dc3545;
+      color: #b30000;
+    }
+
+    .log-entry.success {
+      border-left-color: #28a745;
+      color: #155724;
+    }
+
+    img {
+      display: block;
+      border-radius: 10px;
+    }
+
+    @media screen and (max-width: 1000px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .logs {
+        width: 90%;
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="video-feed">
+      <img src="/video" width="640" height="480" alt="Live Feed">
+    </div>
+    <div class="logs">
+      <h2>Activity Log</h2>
+      <div id="log-entries"></div>
+    </div>
+  </div>
+
+  <script>
+    async function fetchLogs() {
+      try {
+        const response = await fetch('/logs');
+        const logs = await response.json();
+        const container = document.getElementById('log-entries');
+        container.innerHTML = logs.map(msg => {
+          let cls = 'log-entry';
+          if (msg.includes("No Helmet")) cls += ' alert';
+          else if (msg.includes("Helmet Detected")) cls += ' success';
+          return `<div class="${cls}">${msg}</div>`;
+        }).join('');
+      } catch (err) {
+        console.error("Failed to fetch logs:", err);
+      }
+    }
+    setInterval(fetchLogs, 2000);
+    fetchLogs();
+  </script>
+</body>
+</html>
